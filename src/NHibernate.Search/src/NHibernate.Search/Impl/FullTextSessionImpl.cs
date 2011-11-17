@@ -1,22 +1,30 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.QueryParsers;
+using NHibernate.AdoNet;
+using NHibernate.Collection;
 using NHibernate.Engine;
+using NHibernate.Engine.Query.Sql;
 using NHibernate.Event;
+using NHibernate.Hql;
 using NHibernate.Impl;
+using NHibernate.Loader.Custom;
+using NHibernate.Persister.Entity;
 using NHibernate.Search.Backend;
 using NHibernate.Search.Engine;
 using NHibernate.Search.Query;
 using NHibernate.Search.Util;
 using NHibernate.Stat;
+using NHibernate.Transaction;
 using NHibernate.Type;
 
 namespace NHibernate.Search.Impl
 {
-    public class FullTextSessionImpl : IFullTextSession
+    public class FullTextSessionImpl : IFullTextSession, ISessionImplementor
     {
         private readonly ISession session;
         private readonly IEventSource eventSource;
@@ -499,6 +507,297 @@ namespace NHibernate.Search.Impl
         public ISession GetSession(EntityMode entityMode)
         {
             return session.GetSession(entityMode);
+        }
+
+        #endregion
+
+        #region ISessionImplementor
+
+        public void Initialize()
+        {
+            sessionImplementor.Initialize();
+        }
+
+        public void InitializeCollection(IPersistentCollection collection, bool writing)
+        {
+            sessionImplementor.InitializeCollection(collection, writing);
+        }
+
+        public object InternalLoad(string entityName, object id, bool eager, bool isNullable)
+        {
+            return sessionImplementor.InternalLoad(entityName, id, eager, isNullable);
+        }
+
+        public object ImmediateLoad(string entityName, object id)
+        {
+            return sessionImplementor.ImmediateLoad(entityName, id);
+        }
+
+        public IList List(string query, QueryParameters parameters)
+        {
+            return sessionImplementor.List(query, parameters);
+        }
+
+        public IList List(IQueryExpression queryExpression, QueryParameters parameters)
+        {
+            return sessionImplementor.List(queryExpression, parameters);
+        }
+
+        public IQuery CreateQuery(IQueryExpression queryExpression)
+        {
+            return sessionImplementor.CreateQuery(queryExpression);
+        }
+
+        public void List(string query, QueryParameters parameters, IList results)
+        {
+            sessionImplementor.List(query, parameters, results);
+        }
+
+        public IList<T> List<T>(string query, QueryParameters queryParameters)
+        {
+            return sessionImplementor.List<T>(query, queryParameters);
+        }
+
+        public IList<T> List<T>(CriteriaImpl criteria)
+        {
+            return sessionImplementor.List<T>(criteria);
+        }
+
+        public void List(CriteriaImpl criteria, IList results)
+        {
+            sessionImplementor.List(criteria, results);
+        }
+
+        public IList List(CriteriaImpl criteria)
+        {
+            return sessionImplementor.List(criteria);
+        }
+
+        public IEnumerable Enumerable(string query, QueryParameters parameters)
+        {
+            return sessionImplementor.Enumerable(query, parameters);
+        }
+
+        public IEnumerable<T> Enumerable<T>(string query, QueryParameters queryParameters)
+        {
+            return sessionImplementor.Enumerable<T>(query, queryParameters);
+        }
+
+        public IList ListFilter(object collection, string filter, QueryParameters parameters)
+        {
+            return sessionImplementor.ListFilter(collection, filter, parameters);
+        }
+
+        public IList<T> ListFilter<T>(object collection, string filter, QueryParameters parameters)
+        {
+            return sessionImplementor.ListFilter<T>(collection, filter, parameters);
+        }
+
+        public IEnumerable EnumerableFilter(object collection, string filter, QueryParameters parameters)
+        {
+            return sessionImplementor.EnumerableFilter(collection, filter, parameters);
+        }
+
+        public IEnumerable<T> EnumerableFilter<T>(object collection, string filter, QueryParameters parameters)
+        {
+            return sessionImplementor.EnumerableFilter<T>(collection, filter, parameters);
+        }
+
+        public IEntityPersister GetEntityPersister(string entityName, object obj)
+        {
+            return sessionImplementor.GetEntityPersister(entityName, obj);
+        }
+
+        public void AfterTransactionBegin(ITransaction tx)
+        {
+            sessionImplementor.AfterTransactionBegin(tx);
+        }
+
+        public void BeforeTransactionCompletion(ITransaction tx)
+        {
+            sessionImplementor.BeforeTransactionCompletion(tx);
+        }
+
+        public void AfterTransactionCompletion(bool successful, ITransaction tx)
+        {
+            sessionImplementor.AfterTransactionCompletion(successful, tx);
+        }
+
+        public object GetContextEntityIdentifier(object obj)
+        {
+            return sessionImplementor.GetContextEntityIdentifier(obj);
+        }
+
+        public object Instantiate(string entityName, object id)
+        {
+            return sessionImplementor.Instantiate(entityName, id);
+        }
+
+        public IList List(NativeSQLQuerySpecification spec, QueryParameters queryParameters)
+        {
+            return sessionImplementor.List(spec, queryParameters);
+        }
+
+        public void List(NativeSQLQuerySpecification spec, QueryParameters queryParameters, IList results)
+        {
+            sessionImplementor.List(spec, queryParameters, results);
+        }
+
+        public IList<T> List<T>(NativeSQLQuerySpecification spec, QueryParameters queryParameters)
+        {
+            return sessionImplementor.List<T>(spec, queryParameters);
+        }
+
+        public void ListCustomQuery(ICustomQuery customQuery, QueryParameters queryParameters, IList results)
+        {
+            sessionImplementor.ListCustomQuery(customQuery, queryParameters, results);
+        }
+
+        public IList<T> ListCustomQuery<T>(ICustomQuery customQuery, QueryParameters queryParameters)
+        {
+            return sessionImplementor.ListCustomQuery<T>(customQuery, queryParameters);
+        }
+
+        public object GetFilterParameterValue(string filterParameterName)
+        {
+            return sessionImplementor.GetFilterParameterValue(filterParameterName);
+        }
+
+        public IType GetFilterParameterType(string filterParameterName)
+        {
+            return sessionImplementor.GetFilterParameterType(filterParameterName);
+        }
+
+        public IQuery GetNamedSQLQuery(string name)
+        {
+            return sessionImplementor.GetNamedSQLQuery(name);
+        }
+
+        public IQueryTranslator[] GetQueries(string query, bool scalar)
+        {
+            return sessionImplementor.GetQueries(query, scalar);
+        }
+
+        public object GetEntityUsingInterceptor(EntityKey key)
+        {
+            return sessionImplementor.GetEntityUsingInterceptor(key);
+        }
+
+        public string BestGuessEntityName(object entity)
+        {
+            return sessionImplementor.BestGuessEntityName(entity);
+        }
+
+        public string GuessEntityName(object entity)
+        {
+            return sessionImplementor.GuessEntityName(entity);
+        }
+
+        public int ExecuteNativeUpdate(NativeSQLQuerySpecification specification, QueryParameters queryParameters)
+        {
+            return sessionImplementor.ExecuteNativeUpdate(specification, queryParameters);
+        }
+
+        public int ExecuteUpdate(string query, QueryParameters queryParameters)
+        {
+            return sessionImplementor.ExecuteUpdate(query, queryParameters);
+        }
+
+        public void CloseSessionFromDistributedTransaction()
+        {
+            sessionImplementor.CloseSessionFromDistributedTransaction();
+        }
+
+        public long Timestamp
+        {
+            get { return sessionImplementor.Timestamp; }
+        }
+
+        public ISessionFactoryImplementor Factory
+        {
+            get { return sessionImplementor.Factory; }
+        }
+
+        public IBatcher Batcher
+        {
+            get { return sessionImplementor.Batcher; }
+        }
+
+        public IDictionary<string, IFilter> EnabledFilters
+        {
+            get { return sessionImplementor.EnabledFilters; }
+        }
+
+        public IInterceptor Interceptor
+        {
+            get { return sessionImplementor.Interceptor; }
+        }
+
+        public EventListeners Listeners
+        {
+            get { return sessionImplementor.Listeners; }
+        }
+
+        public int DontFlushFromFind
+        {
+            get { return sessionImplementor.DontFlushFromFind; }
+        }
+
+        public ConnectionManager ConnectionManager
+        {
+            get { return sessionImplementor.ConnectionManager; }
+        }
+
+        public bool IsEventSource
+        {
+            get { return sessionImplementor.IsEventSource; }
+        }
+
+        public IPersistenceContext PersistenceContext
+        {
+            get { return sessionImplementor.PersistenceContext; }
+        }
+
+        public string FetchProfile
+        {
+            get { return sessionImplementor.FetchProfile; }
+            set { sessionImplementor.FetchProfile = value; }
+        }
+
+        public bool IsClosed
+        {
+            get { return sessionImplementor.IsClosed; }
+        }
+
+        public bool TransactionInProgress
+        {
+            get { return sessionImplementor.TransactionInProgress; }
+        }
+
+        public EntityMode EntityMode
+        {
+            get { return sessionImplementor.EntityMode; }
+        }
+
+        public FutureCriteriaBatch FutureCriteriaBatch
+        {
+            get { return sessionImplementor.FutureCriteriaBatch; }
+        }
+
+        public FutureQueryBatch FutureQueryBatch
+        {
+            get { return sessionImplementor.FutureQueryBatch; }
+        }
+
+        public Guid SessionId
+        {
+            get { return sessionImplementor.SessionId; }
+        }
+
+        public ITransactionContext TransactionContext
+        {
+            get { return sessionImplementor.TransactionContext; }
+            set { sessionImplementor.TransactionContext = value; }
         }
 
         #endregion
